@@ -67,7 +67,9 @@ export default function PagesLayout({
               />
             </div>
             <h1 className="text-lg font-bold text-slate-900 tracking-tight">
-              <span className="text-blue-600 font-normal">| Espace Admin</span>
+              <span className="text-blue-600 font-normal">
+                | Drinks Madagascar
+              </span>
             </h1>
           </div>
 
@@ -105,7 +107,7 @@ export default function PagesLayout({
                 </button>
                 {!isCollapsed && (
                   <span className="text-xl font-bold text-blue-900 tracking-tight">
-                    Natur'eau
+                    Espace Admin
                   </span>
                 )}
               </div>

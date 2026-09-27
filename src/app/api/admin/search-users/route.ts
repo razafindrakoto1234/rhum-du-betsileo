@@ -1,39 +1,13 @@
+import { verifyAdminRequest } from "@/lib/auth/verify-admin";
 import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdmin";
 import { UserData } from "@/types/user";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    // 1. Vérification de l'autorisation
-    const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json(
-        { error: "Non autorisé. Jeton manquant." },
-        { status: 401 },
-      );
-    }
-
-    const token = authHeader.split("Bearer ")[1];
-    const decodedToken = await adminAuth.verifyIdToken(token);
-
-    // 2. Vérification des droits Administrateur
-    const callerDoc = await adminDb
-      .collection("users")
-      .doc(decodedToken.uid)
-      .get();
-
-    const callerData = callerDoc.data();
-    const role = (
-      callerData?.responsability ||
-      callerData?.role ||
-      ""
-    ).toLowerCase();
-
-    if (!callerDoc.exists || (role !== "administrateur" && role !== "admin")) {
-      return NextResponse.json(
-        { error: "Accès refusé. Droits Administrateur requis" },
-        { status: 403 },
-      );
+    const authResult = await verifyAdminRequest(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
     // 3. Récupération de la requête de recherche

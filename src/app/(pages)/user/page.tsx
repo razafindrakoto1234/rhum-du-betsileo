@@ -22,6 +22,7 @@ import { searchUsers } from "@/lib/service/user/search-user-service";
 import { getUsers } from "@/lib/service/user/get-users-service";
 import UserModal from "./userModal";
 import { deleteUser } from "@/lib/service/user/delete-user-service";
+import DeleteModalConfirmation from "@/components/confirmation/deleteModalConfirmation";
 
 interface UsersStats {
   total: number;
@@ -411,47 +412,15 @@ export default function UsersPage() {
       />
 
       {/* Modal Confirmation de Suppression */}
-      {userToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl space-y-4 border border-slate-100">
-            <div className="flex items-center gap-3 text-rose-600">
-              <div className="p-3 bg-rose-50 rounded-xl">
-                <AlertTriangle className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900">
-                Confirmer la suppression
-              </h3>
-            </div>
-
-            <p className="text-sm text-slate-600">
-              Êtes-vous sûr de vouloir supprimer l'utilisateur{" "}
-              <strong className="text-slate-900">{userToDelete.name}</strong> ?
-              Cette action est irréversible.
-            </p>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setUserToDelete(null)}
-                disabled={isDeleting}
-                className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition"
-              >
-                Annuler
-              </button>
-
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                disabled={isDeleting}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-md shadow-rose-500/20 transition disabled:opacity-50"
-              >
-                {isDeleting && <Loader2 className="w-4 h-4 animate-spin" />}
-                <span>Supprimer</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteModalConfirmation
+        isOpen={!!userToDelete}
+        onClose={() => setUserToDelete(null)}
+        deleteUrl="/api/admin/delete-user"
+        payload={{ userId: userToDelete?.idUser }}
+        onSuccess={handleSuccessCreate}
+        title="Confirmer la suppression"
+        message={`Êtes-vous sûr de vouloir supprimer l'utilisateur ${userToDelete?.name} ? Cette action est irréversible.`}
+      />
     </div>
   );
 }
