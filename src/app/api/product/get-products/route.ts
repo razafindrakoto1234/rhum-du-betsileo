@@ -1,21 +1,23 @@
 import { verifyAdminRequest } from "@/lib/auth/verify-admin";
-import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdmin";
+import { adminDb } from "@/lib/firebase/firebaseAdmin";
+import { ProductData } from "@/types/product";
+import { ProductCapacityData } from "@/types/productCapacity";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    // 1. Vérification du jeton d'autorisation
-    const authResult = await verifyAdminRequest(request)
-       if (authResult instanceof NextResponse) {
-         return authResult
-       }
+    // 1. Vérification des privilèges
+    const authResult = await verifyAdminRequest(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
 
-    // 3. Paramètres de pagination
+    // 2. Extraction des paramètres de pagination
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit") || "6", 10);
     const lastId = searchParams.get("lastId");
 
-    // 4. Exécution de la liste paginée et des agrégations
+    // 3. Construction de la requête Firestore
     let listQuery = adminDb
       .collection("products")
       .orderBy("createdAt", "desc")
@@ -28,54 +30,71 @@ export async function GET(request: Request) {
       }
     }
 
-    const [
-      snapshot,
-      totalSnap,
-      availableSnap,
-      outOfStockSnap,
-      discontinuedSnap,
-    ] = await Promise.all([
+    const [snapshot, totalSnap] = await Promise.all([
       listQuery.get(),
       adminDb.collection("products").count().get(),
-      adminDb
-        .collection("products")
-        .where("status", "==", "AVAILABLE")
-        .count()
-        .get(),
-      adminDb
-        .collection("products")
-        .where("status", "==", "OUT_OF_STOCK")
-        .count()
-        .get(),
-      adminDb
-        .collection("products")
-        .where("status", "==", "DISCONTINUED")
-        .count()
-        .get(),
     ]);
 
     const docs = snapshot.docs;
     const hasMore = docs.length > limit;
     const visibleDocs = hasMore ? docs.slice(0, limit) : docs;
 
-    const products = visibleDocs.map((doc) => {
+    // 4. Mappage vers le nouveau format de données
+    const products: ProductData[] = visibleDocs.map((doc) => {
       const data = doc.data();
+
+      // Formatage sécurisé des capacités
+      const rawCapacities = Array.isArray(data.capacities)
+        ? data.capacities
+        : [];
+      const capacities: ProductCapacityData[] = rawCapacities.map(
+        (cap: any) => ({
+          idCapacity: cap.idCapacity || "",
+          capacity: cap.capacity || "",
+          price: Number(cap.price) || 0,
+          status: cap.status || "AVAILABLE",
+          qrCode: cap.qrCode || "",
+        }),
+      );
+
       return {
-        id: doc.id,
+        idProduct: doc.id,
         name: data.name || "",
-        capacity: data.capacity || "",
         description: data.description || "",
-        price: data.price || 0,
-        status: data.status || "AVAILABLE",
         imageURL: data.imageURL || "",
-        qrCode: data.qrCode || "",
+        capacities,
         createdAt: data.createdAt?.toDate
           ? data.createdAt.toDate().toISOString()
-          : new Date().toISOString(),
+          : data.createdAt || new Date().toISOString(),
         updatedAt: data.updatedAt?.toDate
           ? data.updatedAt.toDate().toISOString()
-          : new Date().toISOString(),
+          : data.updatedAt || new Date().toISOString(),
       };
+    });
+
+    // 5. Calcul des statistiques globales sur l'ensemble des produits
+    let availableCount = 0;
+    let outOfStockCount = 0;
+    let discontinuedCount = 0;
+
+    // Récupération globale légère pour les statistiques
+    const allProductsSnap = await adminDb.collection("products").get();
+    allProductsSnap.docs.forEach((doc) => {
+      const pData = doc.data();
+      const caps: any[] = Array.isArray(pData.capacities)
+        ? pData.capacities
+        : [];
+
+      if (caps.some((c) => c.status === "AVAILABLE")) {
+        availableCount++;
+      } else if (caps.some((c) => c.status === "OUT_OF_STOCK")) {
+        outOfStockCount++;
+      } else if (
+        caps.length > 0 &&
+        caps.every((c) => c.status === "DISCONTINUED")
+      ) {
+        discontinuedCount++;
+      }
     });
 
     const newLastId =
@@ -87,9 +106,9 @@ export async function GET(request: Request) {
       pagination: { hasMore, lastId: newLastId },
       stats: {
         total: totalSnap.data().count,
-        available: availableSnap.data().count,
-        outOfStock: outOfStockSnap.data().count,
-        discontinued: discontinuedSnap.data().count,
+        available: availableCount,
+        outOfStock: outOfStockCount,
+        discontinued: discontinuedCount,
       },
     });
   } catch (error: any) {

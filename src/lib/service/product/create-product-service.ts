@@ -1,30 +1,22 @@
 import { auth } from "@/lib/firebase/firebase";
-
-export interface CreateProductData {
-  name: string;
-  capacity: string;
-  description?: string;
-  price: number;
-  status?: "AVAILABLE" | "OUT_OF_STOCK" | "DISCONTINUED";
-  imageURL?: string;
-  qrCode?: string;
-}
+import { CreateProductInput, CreateProductResponse } from "@/types/product";
 
 export async function createProduct(
-  productData: CreateProductData,
-): Promise<{ success: boolean; idProduct: string; product: any }> {
+  productData: CreateProductInput,
+): Promise<CreateProductResponse> {
   const currentUser = auth.currentUser;
   if (!currentUser) {
     throw new Error("Vous n'êtes pas connecté. Veuillez vous reconnecter.");
   }
 
-  const token = await currentUser.getIdToken();
+  const token = await currentUser.getIdToken(true);
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000);
 
   try {
-    const response = await fetch("api/product/create-product", {
+    // Note: Utilisation du slash initial '/' pour un chemin absolu sécurisé
+    const response = await fetch("/api/product/create-product", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,12 +24,9 @@ export async function createProduct(
       },
       body: JSON.stringify({
         name: productData.name,
-        capacity: productData.capacity,
         description: productData.description,
-        price: productData.price,
-        status: productData.status || "AVAILABLE",
         imageURL: productData.imageURL,
-        qrCode: productData.qrCode,
+        capacities: productData.capacities, // Transmet la liste des capacités
       }),
       signal: controller.signal,
     });
@@ -56,7 +45,7 @@ export async function createProduct(
     }
 
     if (!response.ok) {
-      throw new Error(data.error || "Echec de la création du produit.");
+      throw new Error(data.error || "Échec de la création du produit.");
     }
 
     return data;

@@ -1,24 +1,20 @@
-export type ProductStatus = "AVAILABLE" | "OUT_OF_STOCK" | "DISCONTINUED";
+import { ProductCapacityData } from "./productCapacity";
+
 
 export interface ProductData {
   idProduct: string;
   name: string;
-  capacity: string;
   description?: string;
-  price: number;
-  status: ProductStatus;
   imageURL?: string;
-  qrCode?: string;
+  capacities: ProductCapacityData[]
   createdAt?: string;
   updatedAt?: string;
 }
 export interface CreateProductInput {
   name: string;
   description?: string;
-  price: number;
-  status?: ProductStatus;
   imageURL?: string;
-  qrCode?: string;
+  capacities: ProductCapacityData[];
 }
 
 export interface CreateProductResponse {

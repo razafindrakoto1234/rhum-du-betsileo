@@ -1,11 +1,11 @@
 import { auth } from "@/lib/firebase/firebase";
+import { ProductCapacityData } from "@/types/productCapacity";
 
 export interface UpdateProductPayload {
   idProduct: string;
   name: string;
   description?: string;
-  capacity?: string;
-  price: number;
+  capacities: ProductCapacityData[];
   imageURL?: string;
 }
 
@@ -33,7 +33,7 @@ export const updateProductSerice = async (
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Echec de la modification du produit.");
+    throw new Error(data.error || "Échec de la modification du produit.");
   }
 
   return data.product;

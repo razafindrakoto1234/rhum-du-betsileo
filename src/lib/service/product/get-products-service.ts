@@ -1,17 +1,5 @@
 import { auth } from "@/lib/firebase/firebase";
-
-export interface ProductData {
-  id: string;
-  name: string;
-  capacity?: string;
-  description?: string;
-  price: number;
-  status: "AVAILABLE" | "OUT_OF_STOCK" | "DISCONTINUED";
-  imageURL?: string;
-  qrCode?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { ProductData } from "@/types/product";
 
 export interface PaginatedProductsResponse {
   success: boolean;
