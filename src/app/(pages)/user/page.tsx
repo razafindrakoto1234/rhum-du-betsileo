@@ -137,18 +137,8 @@ export default function UsersPage() {
 
   const isNextDisabled = !hasMore || !lastId || loading;
 
-  // Déclarer l'état pour l'utilisateur sélectionné
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
-
   // Fonction pour ouvrir en mode création
   const handleOpenCreateModal = () => {
-    setSelectedUser(null);
-    setIsModalOpen(true);
-  };
-
-  // Fonction pour ouvrir en mode modification
-  const handleEditModal = (user: UserData) => {
-    setSelectedUser(user);
     setIsModalOpen(true);
   };
 
@@ -178,7 +168,7 @@ export default function UsersPage() {
             Gestion des Utilisateurs
           </h1>
           <p className="text-sm text-slate-500">
-            Gérer les accès et les rôles du personnel Natur'eau
+            Gérer les accès et les rôles du personnel du Rhum du Betsileo
           </p>
         </div>
         <button
@@ -345,28 +335,20 @@ export default function UsersPage() {
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
-                  <button
-                    onClick={() => handleEditModal(user)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 rounded-lg transition"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                    <span>Modifier</span>
-                  </button>
-
                   {!isAdmin && (
-                    <button
-                      onClick={() => setUserToDelete(user)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-50 border border-rose-100 hover:border-rose-200 rounded-lg transition"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Supprimer</span>
-                    </button>
-                  )}
-
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 border border-slate-200 rounded-lg transition">
-                    <Ban className="w-3.5 h-3.5" />
-                    <span>Bloquer</span>
-                  </button>
+                      <button
+                        onClick={() => setUserToDelete(user)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-50 border border-rose-100 hover:border-rose-200 rounded-lg transition"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Supprimer</span>
+                      </button>
+                    ) && (
+                      <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 border border-slate-200 rounded-lg transition">
+                        <Ban className="w-3.5 h-3.5" />
+                        <span>Bloquer</span>
+                      </button>
+                    )}
                 </div>
               </div>
             );
@@ -408,7 +390,6 @@ export default function UsersPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={handleSuccessCreate}
-        userToEdit={selectedUser}
       />
 
       {/* Modal Confirmation de Suppression */}

@@ -5,12 +5,10 @@ export interface ProductCapacityData {
   capacity: string;
   price: number;
   status: ProductStatus;
-  qrCode: string;
 }
 
 export interface CreateProductCapacityInput {
   capacity: string;
   price: number;
   status?: ProductStatus;
-  qrCode?: string;
 }

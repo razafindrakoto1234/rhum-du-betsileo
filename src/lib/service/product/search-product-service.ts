@@ -1,5 +1,5 @@
 import { auth } from "@/lib/firebase/firebase";
-import { ProductData } from "@/lib/service/product/get-products-service";
+import { ProductData } from "@/types/product";
 
 export interface SearchProductResponse {
   success: boolean;

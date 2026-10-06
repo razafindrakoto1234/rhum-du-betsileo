@@ -42,7 +42,7 @@ export default function ProductModal({
 
   // Liste des capacités associées au produit
   const [capacities, setCapacities] = useState<ProductCapacityData[]>([
-    { capacity: "1L", price: 0, status: "AVAILABLE", qrCode: "" },
+    { capacity: "1L", price: 0, status: "AVAILABLE" },
   ]);
 
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ export default function ProductModal({
       setCapacities(
         productToEdit.capacities?.length
           ? productToEdit.capacities
-          : [{ capacity: "1L", price: 0, status: "AVAILABLE", qrCode: "" }],
+          : [{ capacity: "1L", price: 0, status: "AVAILABLE" }],
       );
     } else {
       resetForm();
@@ -73,9 +73,7 @@ export default function ProductModal({
     setName("");
     setDescription("");
     setImageURL("");
-    setCapacities([
-      { capacity: "1L", price: 0, status: "AVAILABLE", qrCode: "" },
-    ]);
+    setCapacities([{ capacity: "1L", price: 0, status: "AVAILABLE" }]);
     setError(null);
   };
 
@@ -317,7 +315,7 @@ export default function ProductModal({
                   </label>
                   <input
                     type="text"
-                    placeholder="Ex: Eau Minérale Natur'eau"
+                    placeholder="Ex: Canelle"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     disabled={loading}
@@ -439,24 +437,6 @@ export default function ProductModal({
 
                       {/* Code-barres / QR Code & Bouton Suppression */}
                       <div className="flex items-center gap-3">
-                        <div className="flex-1 relative">
-                          <QrCode className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                          <input
-                            type="text"
-                            placeholder="Code QR / Code-barres (optionnel)"
-                            value={cap.qrCode || ""}
-                            onChange={(e) =>
-                              handleCapacityChange(
-                                index,
-                                "qrCode",
-                                e.target.value,
-                              )
-                            }
-                            disabled={loading}
-                            className="w-full pl-8 pr-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-900 focus:outline-none focus:border-blue-600"
-                          />
-                        </div>
-
                         {capacities.length > 1 && (
                           <button
                             type="button"

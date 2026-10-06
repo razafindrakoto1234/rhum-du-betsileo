@@ -1,6 +1,7 @@
 import { verifyAdminRequest } from "@/lib/auth/verify-admin";
 import { adminDb } from "@/lib/firebase/firebaseAdmin";
-import { ProductData } from "@/lib/service/product/get-products-service";
+import { ProductCapacityData } from "@/types/productCapacity";
+import { ProductData } from "@/types/product";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -28,25 +29,35 @@ export async function GET(request: Request) {
 
       const name = (data.name || "").toLowerCase();
       const description = (data.description || "").toLowerCase();
-      const capacity = (data.capacity || "").toLowerCase();
+
+      // Extraction sécurisée des capacités
+      const capacities: ProductCapacityData[] = Array.isArray(data.capacities)
+        ? data.capacities
+        : [];
+
+      // Vérifier si la recherche correspond au nom, à la description ou à l'une des capacités
+      const hasMatchingCapacity = capacities.some((c) =>
+        (c.capacity || "").toLowerCase().includes(query),
+      );
 
       const isMatch =
         name.includes(query) ||
         description.includes(query) ||
-        capacity.includes(query);
+        hasMatchingCapacity;
 
       if (isMatch) {
         matchingProducts.push({
-          id: doc.id,
+          idProduct: doc.id,
           name: data.name || "",
           description: data.description || "",
-          price: data.price || 0,
-          capacity: data.capacity || "",
           imageURL: data.imageURL || "",
-          status: data.status || "AVAILABLE",
+          capacities: capacities,
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate().toISOString()
             : new Date().toISOString(),
+          updatedAt: data.updatedAt?.toDate
+            ? data.updatedAt.toDate().toISOString()
+            : undefined,
         });
       }
     });

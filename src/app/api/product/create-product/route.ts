@@ -63,7 +63,6 @@ export async function POST(request: Request) {
         capacity: cap.capacity.trim(),
         price: numericPrice,
         status: cap.status || "AVAILABLE",
-        qrCode: cap.qrCode ? cap.qrCode.trim() : "",
       });
     }
 

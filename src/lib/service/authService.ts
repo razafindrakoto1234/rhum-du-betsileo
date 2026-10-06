@@ -42,12 +42,19 @@ export const loginAdmin = async (
       throw new Error("Accès refusé: Droits d'administrateur requis.");
     }
 
+    if (userData.status !== "APPROVED") {
+      await signOut(auth);
+      throw new Error("Accès refusé: Votre compte n'est pas encore approuvé.");
+    }
+
     return userData;
   } catch (error: any) {
     // Gestion spécifique du hors ligne si le compte n'a jamais été authentifié sur l'appareil
     if (
       error.code === "auth/network-request-failed" ||
-      (!navigator.onLine && !error.message.includes("Accès refusé"))
+      (!navigator.onLine &&
+        !error.message.includes("Accès refusé") &&
+        !error.message.includes("approuvé"))
     ) {
       throw new Error(
         "Vous êtes hors ligne. Une connexion est requise pour la première connexion de cet administrateur.",

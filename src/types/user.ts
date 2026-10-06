@@ -1,5 +1,7 @@
 export type UserResponsability = "Administrateur" | "Simple";
 
+export type UserStatus = "PENDING" | "APPROVED" | "REJECTED";
+
 export interface UserData {
   idUser: string;
   name: string;
@@ -7,6 +9,8 @@ export interface UserData {
   smartphone: string;
   photoURL?: string;
   responsability: UserResponsability;
+  isBlocked: boolean;
+  status?: UserStatus;
   createdAt: string;
 }
 

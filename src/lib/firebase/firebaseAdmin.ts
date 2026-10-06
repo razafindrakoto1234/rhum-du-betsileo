@@ -1,6 +1,7 @@
-import { initializeApp, getApps, cert } from "firebase-admin/app";
+import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
 
 function getServiceAccount() {
   const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
@@ -28,17 +29,22 @@ function getServiceAccount() {
 }
 
 if (!getApps().length) {
-  const { projectId, clientEmail, privateKey } = getServiceAccount();
+  const serviceAccount = getServiceAccount();
+
+  const bucketName =
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+    `${serviceAccount.projectId}.appspot.com`;
 
   initializeApp({
     credential: cert({
-      projectId,
-      clientEmail,
-      privateKey,
+      projectId: serviceAccount.projectId,
+      clientEmail: serviceAccount.clientEmail,
+      privateKey: serviceAccount.privateKey,
     }),
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    storageBucket: bucketName,
   });
 }
 
 export const adminAuth = getAuth();
 export const adminDb = getFirestore();
+export const adminStorage = getStorage();

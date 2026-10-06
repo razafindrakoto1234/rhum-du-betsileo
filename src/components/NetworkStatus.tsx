@@ -2,44 +2,24 @@
 
 import { useState, useEffect, ReactElement } from "react";
 import { Wifi, WifiOff } from "lucide-react";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "@/lib/firebase/firebase";
 
 export default function NetworkStatus(): ReactElement {
   const [isOnline, setIsOnline] = useState<boolean>(true);
 
   useEffect(() => {
-    // 1. Écouter les évènements réseau du navigateur
-    const updateBrowserStatus = () => {
-      setIsOnline(navigator.onLine);
-    };
+    // 1. Initialiser avec le statut actuel du navigateur
+    setIsOnline(navigator.onLine);
 
-    window.addEventListener("online", updateBrowserStatus);
-    window.addEventListener("offline", updateBrowserStatus);
+    // 2. Écouter les événements de connexion/déconnexion du navigateur
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-    // 2. Écouter l'état réel de la connexion Firestore
-    // On écoute un document factice ou n'importe quelle référence pour vérifier le statut du cache
-    const unsubscribeFirestore = onSnapshot(
-      doc(db, "--network-check--", "--ping--"),
-      { includeMetadataChanges: true },
-      (snapshot) => {
-        // Si les données proviennent du cache et que la synchro est en attente, nous sommes hors ligne
-        if (snapshot.metadata.fromCache) {
-          setIsOnline(false);
-        } else {
-          setIsOnline(true);
-        }
-      },
-      () => {
-        // En cas d'erreur de connexion Firestore
-        setIsOnline(false);
-      },
-    );
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener("online", updateBrowserStatus);
-      window.removeEventListener("offline", updateBrowserStatus);
-      unsubscribeFirestore();
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
