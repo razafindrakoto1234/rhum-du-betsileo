@@ -8,7 +8,9 @@ export interface WarehouseStockData {
   idWarehouse: string;
   idProduct: string;
   idCapacity: string;
-  quantity: number;
+  cartonQuantity: number;
+  bottleQuantity: number;
+  totalBottles?: number;
   minThreshold?: number;
   capacityDetails?: ProductCapacityData;
   productDetails?: ProductData;

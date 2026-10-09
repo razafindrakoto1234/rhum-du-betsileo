@@ -20,11 +20,21 @@ import { WarehouseData } from "@/types/warehouse";
 import { getWarehouses } from "@/lib/service/warehouse/get-warehouse-service";
 import { searchWarehouse } from "@/lib/service/warehouse/search-warehouse-service";
 import DeleteModalConfirmation from "@/components/confirmation/deleteModalConfirmation";
+import { useRouter } from "next/navigation";
 
 export default function WarehousesPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedWarehouseForEdit, setSelectedWarehouseForEdit] =
     useState<WarehouseData | null>(null);
+
+  const router = useRouter();
+
+  const handleViewWarehouseStock = (idWarehouse: string, name: string) => {
+    // On passe id ET name dans l'URL
+    router.push(
+      `/stock?warehouseId=${idWarehouse}&warehouseName=${encodeURIComponent(name)}`,
+    );
+  };
 
   const [warehouseToDelete, setWarehouseToDelete] =
     useState<WarehouseData | null>(null);
@@ -287,7 +297,12 @@ export default function WarehousesPage() {
                     </button>
                   </div>
 
-                  <button className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition py-1 px-3 rounded-lg hover:bg-blue-50">
+                  <button
+                    onClick={() =>
+                      handleViewWarehouseStock(wh.idWarehouse, wh.name)
+                    }
+                    className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition py-1 px-3 rounded-lg hover:bg-blue-50"
+                  >
                     <Eye className="w-3.5 h-3.5" />
                     <span>Voir plus</span>
                   </button>
