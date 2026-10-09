@@ -4,19 +4,20 @@ import { NextResponse } from "next/server";
 export async function DELETE(req: Request) {
   try {
     const body = await req.json();
-    const productId = body.productId || body.idProduct;
+    const warehouseId =
+      body.idWarehouse || body.warehouseID || body.warehouseId;
 
-    if (!productId) {
+    if (!warehouseId) {
       return NextResponse.json(
-        { error: "L'identifiant du produit (productId) est requis." },
+        { error: "L'identifiant de l'entrepôt (warehouseID) est requis." },
         { status: 400 },
       );
     }
 
-    await adminDb.collection("products").doc(productId).delete();
+    await adminDb.collection("warehouses").doc(warehouseId).delete();
 
     return NextResponse.json(
-      { message: "Produit supprimé avec succès." },
+      { message: "Entrepôt supprimé avec succès." },
       { status: 200 },
     );
   } catch (error: any) {

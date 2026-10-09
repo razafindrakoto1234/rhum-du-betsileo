@@ -46,6 +46,7 @@ export async function GET(request: Request) {
           mail: data.mail || "",
           smartphone: data.smartphone || "",
           photoURL: data.photoURL || "",
+          isBlocked: data.isBlocked || false,
           responsability: data.responsability || "simple",
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate().toISOString()

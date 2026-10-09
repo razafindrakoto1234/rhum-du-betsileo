@@ -56,7 +56,6 @@ export async function PUT(request: Request) {
       capacity: String(cap.capacity).trim(),
       price: Number(cap.price),
       status: cap.status || "AVAILABLE",
-      qrCode: cap.qrCode || "",
     }));
 
     // Objet de mise à jour Firestore

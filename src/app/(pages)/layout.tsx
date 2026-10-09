@@ -40,7 +40,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
   { label: "Utilisateurs", href: "/user", icon: Users },
   { label: "Produits", href: "/product", icon: Package },
-  { label: "Entrepots", href: "/warehouse", icon: Warehouse },
+  { label: "Entrepôts", href: "/warehouse", icon: Warehouse },
   { label: "Dépôts & Stocks", href: "/depos", icon: Boxes },
   { label: "Transfert", href: "/transfer", icon: ArrowLeftRight },
 ];
