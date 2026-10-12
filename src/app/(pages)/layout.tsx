@@ -41,7 +41,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Utilisateurs", href: "/user", icon: Users },
   { label: "Produits", href: "/product", icon: Package },
   { label: "Entrepôts", href: "/warehouse", icon: Warehouse },
-  { label: "Dépôts & Stocks", href: "/depos", icon: Boxes },
+  { label: "Point de Vente", href: "/pointSale", icon: Boxes },
   { label: "Transfert", href: "/transfer", icon: ArrowLeftRight },
 ];
 

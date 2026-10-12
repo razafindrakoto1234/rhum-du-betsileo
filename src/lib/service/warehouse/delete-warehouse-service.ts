@@ -17,7 +17,7 @@ export async function deleteWarehouse(
 
   if (!response.ok) {
     throw new Error(
-      result.error || "Erreur lors de la suppression du produit.",
+      result.error || "Erreur lors de la suppression de l'entrepôt.",
     );
   }
 }
