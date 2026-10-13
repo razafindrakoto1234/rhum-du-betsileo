@@ -14,6 +14,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Package,
 } from "lucide-react";
 import { PointOfSaleData } from "@/types/pointOfSale";
 import { UserData } from "@/types/user";
@@ -22,6 +23,7 @@ import { searchPOS } from "@/lib/service/pointOfSale/search-pos-service";
 import { fetchUsers } from "@/lib/service/user/fetch-user-service";
 import PointSaleModal from "@/app/(pages)/pointSale/pointSaleModal";
 import DeleteModalConfirmation from "@/components/confirmation/deleteModalConfirmation";
+import { useRouter } from "next/navigation";
 
 export default function PointSalePage() {
   const [pointsOfSale, setPointsOfSale] = useState<PointOfSaleData[]>([]);
@@ -33,6 +35,13 @@ export default function PointSalePage() {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [selectedPOSForEdit, setSelectedPOSForEdit] =
     useState<PointOfSaleData | null>(null);
+
+  const router = useRouter();
+
+  const handleViewPOSStock = (idPOS: string, name: string) => {
+    // On passe id ET name dans l'URL
+    router.push(`/stockPOS?POSId=${idPOS}&POSName=${encodeURIComponent(name)}`);
+  };
 
   const [POSToDelete, setPOSToDelete] = useState<PointOfSaleData | null>(null);
 
@@ -315,6 +324,16 @@ export default function PointSalePage() {
                         Aucun responsable assigné
                       </span>
                     )}
+
+                    <button
+                      onClick={() => handleViewPOSStock(pos.idPOS, pos.name)}
+                      type="button"
+                      className="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-[11px] font-bold transition flex items-center gap-1.5 shrink-0"
+                      title="Voir le stock de ce point de vente"
+                    >
+                      <Package className="w-3.5 h-3.5" />
+                      <span>Stock</span>
+                    </button>
 
                     <div className="flex items-center gap-1 shrink-0">
                       <button
