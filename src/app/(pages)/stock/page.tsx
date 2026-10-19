@@ -48,7 +48,7 @@ export default function StockPage() {
   const [lastId, setLastId] = useState<string | null>(null);
   const [pageCursors, setPageCursors] = useState<(string | null)[]>([null]);
 
-  const PAGE_LIMIT = 2;
+  const PAGE_LIMIT = 4;
 
   const fetchWarehouseStock = useCallback(async () => {
     if (!warehouseId) return;
@@ -195,7 +195,7 @@ export default function StockPage() {
       </div>
 
       {loadingProducts ? (
-        <div className="flex flex-col items-center justify-center py-16 text-slate-400 space-y-3">
+        <div className="flex flex-col items-center justify-center py-20 text-slate-400 space-y-3">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
           <p className="text-sm font-medium">Chargement des produits...</p>
         </div>
@@ -207,7 +207,7 @@ export default function StockPage() {
           </h3>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {products.map((product) => (
             <div
               key={product.idProduct}
@@ -235,13 +235,13 @@ export default function StockPage() {
                   </h3>
                 </div>
 
-                <div className="border-t border-slate-100 pt-3 space-y-3">
-                  <h4 className="text-xs font-semibold text-slate-700 uppercase">
+                <div className="pt-3 border-t border-slate-50 space-y-2.5">
+                  <span className="text-[11px] font-bold text-slate-700 uppercase">
                     Formats & Quantités
-                  </h4>
+                  </span>
 
                   {product.capacities && product.capacities.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-2">
                       {product.capacities.map((cap, cIdx) => {
                         const capacityId = cap.idCapacity || `cap-${cIdx}`;
                         const stockKey = `${product.idProduct}_${capacityId}`;

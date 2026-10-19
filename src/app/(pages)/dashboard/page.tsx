@@ -16,7 +16,7 @@ export default function DashboardPage(): ReactElement {
               Tableau de Bord Administrateur
             </h1>
             <p className="text-sm text-slate-500">
-              Bienvenue dans l'espace de gestion Natur'eau
+              Bienvenue dans l'espace de gestion Rhum du Betsileo
             </p>
           </div>
         </header>
