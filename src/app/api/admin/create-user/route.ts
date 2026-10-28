@@ -9,9 +9,9 @@ export async function POST(request: Request) {
   let createdUid: string | null = null;
 
   try {
-    const authResult = await verifyAdminRequest(request)
+    const authResult = await verifyAdminRequest(request);
     if (authResult instanceof NextResponse) {
-      return authResult
+      return authResult;
     }
 
     const { displayName, email, password, phoneNumber, photoURL } =
@@ -48,7 +48,9 @@ export async function POST(request: Request) {
           mail: cleanEmail,
           smartphone: phoneNumber || "",
           photoURL: photoURL || "",
-          responsability: "simple",
+          responsability: "Simple", // Mis avec une majuscule pour correspondre à ton type TypeScript
+          status: "APPROVED", // Ajouté pour que l'app mobile puisse lister le compte dans le login
+          isBlocked: false,
           createdAt: new Date(),
         });
     } catch (firestoreError) {
